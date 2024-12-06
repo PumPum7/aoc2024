@@ -30,7 +30,7 @@ impl Direction {
 }
 
 fn find_loop(
-    grid: &[u8],
+    grid: &Grid,
     width: usize,
     height: usize,
     pos: (i32, i32),
@@ -91,7 +91,7 @@ fn data_handler(input: &str) -> Option<(Grid, usize, usize)> {
     let lines: Vec<_> = input.lines().collect();
     let width = lines[0].len();
     let height = lines.len();
-    let grid: Vec<u8> = lines.iter().flat_map(|l| l.as_bytes()).copied().collect();
+    let grid: Grid = lines.iter().flat_map(|l| l.as_bytes()).copied().collect();
     Some((grid, width, height))
 }
 
