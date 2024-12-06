@@ -28,10 +28,10 @@ impl Direction {
     }
 }
 
-fn get_start_pos(grid: &Vec<Vec<char>>) -> Option<(i32, i32)> {
+fn get_start_pos(grid: &Vec<Vec<u8>>) -> Option<(i32, i32)> {
     for (i, row) in grid.iter().enumerate() {
         for (j, &cell) in row.iter().enumerate() {
-            if cell == '^' {
+            if cell == b'^' {
                 return Some((i as i32, j as i32));
             }
         }
@@ -40,7 +40,7 @@ fn get_start_pos(grid: &Vec<Vec<char>>) -> Option<(i32, i32)> {
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let grid: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
+    let grid: Vec<Vec<u8>> = input.lines().map(|line| line.as_bytes().to_vec()).collect();
     let rows = grid.len() as i32;
     let cols = grid[0].len() as i32;
     
@@ -61,7 +61,7 @@ pub fn part_one(input: &str) -> Option<u32> {
         }
         
         // Check if obstacle ahead
-        if grid[new_pos.0 as usize][new_pos.1 as usize] == '#' {
+        if grid[new_pos.0 as usize][new_pos.1 as usize] == b'#' {
             dir = dir.turn_right();
         } else {
             pos = new_pos;
@@ -73,7 +73,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let mut grid: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
+    let mut grid: Vec<Vec<u8>> = input.lines().map(|line| line.as_bytes().to_vec()).collect();
     let rows = grid.len() as i32;
     let cols = grid[0].len() as i32;
     
@@ -90,12 +90,12 @@ pub fn part_two(input: &str) -> Option<u32> {
     // Try adding an obstruction at each empty position
     for i in 0..rows {
         for j in 0..cols {
-            if grid[i as usize][j as usize] != '.' {
+            if grid[i as usize][j as usize] != b'.' {
                 continue;
             }
 
             // Add temporary obstruction
-            grid[i as usize][j as usize] = '#';
+            grid[i as usize][j as usize] = b'#';
 
             // Reset tracking structures
             visited.clear();
@@ -127,7 +127,7 @@ pub fn part_two(input: &str) -> Option<u32> {
                 }
                 
                 // Check if obstacle ahead
-                if grid[new_pos.0 as usize][new_pos.1 as usize] == '#' {
+                if grid[new_pos.0 as usize][new_pos.1 as usize] == b'#' {
                     dir = dir.turn_right();
                 } else {
                     pos = new_pos;
@@ -135,7 +135,7 @@ pub fn part_two(input: &str) -> Option<u32> {
             }
 
             // Remove the temporary obstruction
-            grid[i as usize][j as usize] = '.';
+            grid[i as usize][j as usize] = b'.';
         }
     }
 
