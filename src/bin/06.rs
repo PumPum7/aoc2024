@@ -57,15 +57,12 @@ fn find_loop(
         }
 
         let delta = Direction::ALL[direction].get_delta();
-        let next_pos = (
-            current_pos.0 + delta.0,
-            current_pos.1 + delta.1,
-        );
+        let next_pos = (current_pos.0 + delta.0, current_pos.1 + delta.1);
 
-        if next_pos.0 < 0 
-            || next_pos.1 < 0 
-            || next_pos.0 >= width as i32 
-            || next_pos.1 >= height as i32 
+        if next_pos.0 < 0
+            || next_pos.1 < 0
+            || next_pos.0 >= width as i32
+            || next_pos.1 >= height as i32
         {
             return false;
         }
@@ -76,7 +73,7 @@ fn find_loop(
         if grid[next_idx] == b'#' {
             direction = (direction + 1) % 4;
             let direction_flag = 1u8 << direction;
-            
+
             if seen[current_idx] & direction_flag != 0 {
                 return true;
             }
@@ -106,26 +103,43 @@ fn find_start(grid: &Grid, width: usize) -> Point {
 pub fn part_one(input: &str) -> Option<u32> {
     let (grid, width, height) = data_handler(input)?;
     let start = find_start(&grid, width);
-    
+
     let mut seen = vec![0u8; grid.len()];
     let mut marked = vec![false; grid.len()];
     let mut route = Vec::with_capacity(grid.len());
-    
-    find_loop(&grid, width, height, start, Some(&mut route), &mut seen, &mut marked);
+
+    find_loop(
+        &grid,
+        width,
+        height,
+        start,
+        Some(&mut route),
+        &mut seen,
+        &mut marked,
+    );
     Some(route.len() as u32)
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
     let (mut grid, width, height) = data_handler(input)?;
     let start = find_start(&grid, width);
-    
+
     let mut seen = vec![0u8; grid.len()];
     let mut marked = vec![false; grid.len()];
     let mut route = Vec::with_capacity(grid.len());
-    
-    find_loop(&grid, width, height, start, Some(&mut route), &mut seen, &mut marked);
-    
-    route[1..].iter()
+
+    find_loop(
+        &grid,
+        width,
+        height,
+        start,
+        Some(&mut route),
+        &mut seen,
+        &mut marked,
+    );
+
+    route[1..]
+        .iter()
         .map(|&i| {
             grid[i] = b'#';
             let has_loop = find_loop(&grid, width, height, start, None, &mut seen, &mut marked);

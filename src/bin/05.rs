@@ -8,7 +8,7 @@ fn parse_rules_and_input(
     let mut sections = input.split("\n\n");
     let rules_section = sections.next()?;
     let updates_section = sections.next()?;
-    
+
     // Pre-allocate HashMap with estimated capacity
     let mut rules_map = HashMap::with_capacity(rules_section.lines().count());
 
@@ -108,8 +108,8 @@ fn quicksort(arr: &mut [u32], rules: &HashMap<(u32, u32), bool>, start: usize, e
     if end - start <= 10 {
         for i in (start + 1)..=end {
             let mut j = i;
-            while j > start && rules.contains_key(&(arr[j-1], arr[j])) {
-                arr.swap(j-1, j);
+            while j > start && rules.contains_key(&(arr[j - 1], arr[j])) {
+                arr.swap(j - 1, j);
                 if j > 0 {
                     j -= 1;
                 } else {
