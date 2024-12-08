@@ -1,6 +1,7 @@
 advent_of_code::solution!(8);
 
 use std::collections::{HashMap, HashSet};
+
 fn get_positions(grid: &[Vec<char>]) -> HashMap<char, Vec<(i32, i32)>> {
     let mut positions: HashMap<char, Vec<(i32, i32)>> = HashMap::new();
     for (y, row) in grid.iter().enumerate() {
@@ -24,6 +25,19 @@ fn find_antinodes(grid: &[Vec<char>], max_distance: Option<i32>) -> HashSet<(i32
             for &pos2 in antennas[i + 1..].iter() {
                 let dx = pos2.0 - pos1.0;
                 let dy = pos2.1 - pos1.1;
+                
+                if max_distance == Some(2) {
+                    // Special case for n=2 (part one)
+                    let points = [
+                        (pos1.0 + dx * 2, pos1.1 + dy * 2),
+                        (pos2.0 - dx * 2, pos2.1 - dy * 2),
+                    ];
+                    
+                    antinodes.extend(points.iter()
+                        .filter(|&&(x, y)| x >= 0 && y >= 0 && x < width && y < height));
+                    continue;
+                }
+
                 let max_n = max_distance.unwrap_or(i32::MAX);
                 
                 let mut n = 1;
@@ -54,7 +68,10 @@ fn find_antinodes(grid: &[Vec<char>], max_distance: Option<i32>) -> HashSet<(i32
 
 pub fn part_one(input: &str) -> Option<u32> {
     let grid: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
-    Some(find_antinodes(&grid, Some(2)).len() as u32)
+    
+    let antinodes = find_antinodes(&grid, Some(2));
+
+    Some(antinodes.len() as u32)
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
