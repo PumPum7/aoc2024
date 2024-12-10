@@ -2,13 +2,11 @@ advent_of_code::solution!(9);
 
 pub fn parse(input: &str) -> Vec<i32> {
     let mut result = Vec::with_capacity(input.len());
-
-    let mut iter = input.bytes().enumerate();
-    while let Some((i, b)) = iter.next() {
+    input.bytes().enumerate().for_each(|(i, b)| {
         let len = (b - b'0') as usize;
-        let value = if i % 2 == 0 { i as i32 / 2 } else { -1 };
+        let value = if i & 1 == 0 { i as i32 >> 1 } else { -1 };
         result.extend(std::iter::repeat(value).take(len));
-    }
+    });
     result
 }
 
@@ -17,22 +15,15 @@ fn move_files_to_right(blocks: &[i32]) -> Vec<i32> {
     let mut left = 0;
     let mut right = result.len() - 1;
 
-    // Two-pointer approach
     while left < right {
-        // Find next -1 from left
         while left < right && result[left] != -1 {
             left += 1;
         }
-
-        // Find next non -1 from right
         while left < right && result[right] == -1 {
             right -= 1;
         }
-
         if left < right {
-            let temp = result[right];
-            result[right] = result[left];
-            result[left] = temp;
+            result.swap(left, right);
             left += 1;
             right -= 1;
         }
@@ -40,14 +31,14 @@ fn move_files_to_right(blocks: &[i32]) -> Vec<i32> {
     result
 }
 
+#[inline]
 fn checksum(blocks: &[i32]) -> i64 {
-    let mut sum = 0;
-    for (pos, &id) in blocks.iter().enumerate() {
-        if id != -1 {
-            sum += pos as i64 * id as i64;
-        }
-    }
-    sum
+    blocks
+        .iter()
+        .enumerate()
+        .filter(|(_, &id)| id != -1)
+        .map(|(pos, &id)| pos as i64 * id as i64)
+        .sum()
 }
 
 pub fn part_one(input: &str) -> Option<i64> {
