@@ -81,27 +81,37 @@ pub fn part_two(input: &str) -> Option<u32> {
     let width = 101;
     let height = 103;
     
+    let mut positions = vec![0u8; (width * height) as usize];
+    
     for step in 1.. {
         simulate_step(&mut robots, width, height);
         
-        // Check for aligned robots (16 or more in a row)
-        let mut positions = vec![0; (width * height) as usize];
+        positions.fill(0);
+        
         for robot in &robots {
             let idx = (robot.0.1 * width + robot.0.0) as usize;
-            positions[idx] += 1;
+            positions[idx] = 1;
         }
         
+        // Check for aligned robots using sliding window
         for y in 0..height {
+            let row_start = (y * width) as usize;
+            let mut window_sum = positions[row_start..row_start + 16].iter().sum::<u8>();
+            
+            if window_sum == 16 {
+                return Some(step);
+            }
+            
             for x in 0..width-16 {
-                let mut aligned = true;
-                for i in 0..16 {
-                    if positions[(y * width + x + i) as usize] == 0 {
-                        aligned = false;
-                        break;
-                    }
-                }
-                if aligned {
+                let idx = row_start + x as usize;
+                window_sum = window_sum - positions[idx] + positions[idx + 16];
+                if window_sum == 16 {
                     return Some(step);
+                }
+                
+                // Early exit if remaining positions can't form 16 consecutive robots
+                if window_sum < 8 {
+                    continue;
                 }
             }
         }
