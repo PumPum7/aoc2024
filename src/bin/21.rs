@@ -1,5 +1,5 @@
-use std::collections::{HashMap, VecDeque};
 use std::cmp::Ordering;
+use std::collections::{HashMap, VecDeque};
 
 advent_of_code::solution!(21);
 
@@ -44,19 +44,19 @@ fn cost_step(
     if let Some(&cost) = memo.get(&hash_val) {
         return cost;
     }
-    
+
     let mut cost = usize::MAX;
     let mut q = VecDeque::new();
     q.push_back((pos, Vec::new()));
     let keypad = keypads[0];
-    
+
     // Calculate Manhattan distance for early pruning
-    let manhattan = (pos.x as isize - next.x as isize).abs() + 
-                   (pos.y as isize - next.y as isize).abs();
+    let manhattan =
+        (pos.x as isize - next.x as isize).abs() + (pos.y as isize - next.y as isize).abs();
     if manhattan as usize > code.len() {
         return usize::MAX;
     }
-    
+
     while let Some((mut p, mut presses)) = q.pop_front() {
         if p == next {
             presses.push(b'A');
@@ -74,15 +74,15 @@ fn cost_step(
                 new_presses.push(b'>');
                 q.push_back((p, new_presses));
                 p.x -= 1;
-            },
+            }
             Ordering::Greater => {
                 p.x -= 1;
                 let mut new_presses = presses.clone();
                 new_presses.push(b'<');
                 q.push_back((p, new_presses));
                 p.x += 1;
-            },
-            Ordering::Equal => {},
+            }
+            Ordering::Equal => {}
         }
         match p.y.cmp(&next.y) {
             Ordering::Less => {
@@ -91,15 +91,15 @@ fn cost_step(
                 new_presses.push(b'v');
                 q.push_back((p, new_presses));
                 p.y -= 1;
-            },
+            }
             Ordering::Greater => {
                 p.y -= 1;
                 let mut new_presses = presses.clone();
                 new_presses.push(b'^');
                 q.push_back((p, new_presses));
                 p.y += 1;
-            },
-            Ordering::Equal => {},
+            }
+            Ordering::Equal => {}
         }
     }
 
@@ -107,11 +107,15 @@ fn cost_step(
     cost
 }
 
-fn cost_recursive(presses: &[u8], keypads: &[&[[char; 3]]], memo: &mut HashMap<u64, usize>) -> usize {
+fn cost_recursive(
+    presses: &[u8],
+    keypads: &[&[[char; 3]]],
+    memo: &mut HashMap<u64, usize>,
+) -> usize {
     if keypads.is_empty() {
         return presses.len();
     }
-    
+
     let keypad = keypads[0];
     let mut pos: Vec2<usize> = keypad
         .iter()
@@ -137,7 +141,7 @@ fn cost_recursive(presses: &[u8], keypads: &[&[[char; 3]]], memo: &mut HashMap<u
 fn complexity(code: &str, keypads: &[&[[char; 3]]], memo: &mut HashMap<u64, usize>) -> usize {
     let bytes = code.as_bytes();
     let cost = cost_recursive(bytes, keypads, memo);
-    cost * std::str::from_utf8(&bytes[..bytes.len()-1])
+    cost * std::str::from_utf8(&bytes[..bytes.len() - 1])
         .unwrap()
         .parse::<usize>()
         .unwrap()
@@ -149,10 +153,10 @@ fn part_one(input: &str) -> Option<u64> {
     for _ in 0..2 {
         keypads.push(&KEYPAD_DIRECTION);
     }
-    
+
     let mut memo = HashMap::new();
     let mut total = 0;
-    
+
     for line in input.lines() {
         total += complexity(line, &keypads, &mut memo) as u64;
     }
@@ -165,14 +169,14 @@ pub fn part_two(input: &str) -> Option<u64> {
     for _ in 0..25 {
         keypads.push(&KEYPAD_DIRECTION);
     }
-    
+
     let mut memo = HashMap::new();
     let mut total = 0;
-    
+
     for line in input.lines() {
         total += complexity(line, &keypads, &mut memo) as u64;
     }
-    
+
     Some(total)
 }
 

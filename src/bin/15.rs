@@ -19,7 +19,7 @@ fn is_movable_vertical(grid: &[u8], w: usize, b: (usize, usize), y: usize, dy: i
     let checks = [
         (b.0, b'[', (b.0, b.0 + 1)),
         (b.0, b']', (b.0 - 1, b.0)),
-        (b.1, b'[', (b.1, b.1 + 1))
+        (b.1, b'[', (b.1, b.1 + 1)),
     ];
 
     for (x, c, box_coords) in checks {
@@ -43,9 +43,9 @@ fn move_vertical(grid: &mut [u8], w: usize, b: (usize, usize), y: usize, dy: isi
 
     // Move any large boxes that are in the way
     let box_checks = [
-        (b.0, b'[', (b.0, b.0 + 1)),     // Large box directly in way
-        (b.0, b']', (b.0 - 1, b.0)),     // Large box to the left
-        (b.1, b'[', (b.1, b.1 + 1))      // Large box to the right
+        (b.0, b'[', (b.0, b.0 + 1)), // Large box directly in way
+        (b.0, b']', (b.0 - 1, b.0)), // Large box to the left
+        (b.1, b'[', (b.1, b.1 + 1)), // Large box to the right
     ];
 
     for (x, c, box_coords) in box_checks {
@@ -80,23 +80,33 @@ fn move_horizontal(grid: &mut [u8], w: usize, pos: (usize, usize), dx: isize) {
     }
 }
 
-
 fn process_grid(input: &str) -> (Vec<u8>, Vec<u8>, usize, usize, (usize, usize)) {
     let (grid, instructions) = input.split_once("\n\n").expect("Valid input format");
-    let width = grid.lines().next().expect("Grid has at least one line").len();
+    let width = grid
+        .lines()
+        .next()
+        .expect("Grid has at least one line")
+        .len();
     let mut grid: Vec<u8> = grid.lines().flat_map(|l| l.as_bytes()).copied().collect();
     let height = grid.len() / width;
 
     // Find robot position
-    let robot_idx = grid.iter().position(|&c| c == b'@').expect("Robot position found");
+    let robot_idx = grid
+        .iter()
+        .position(|&c| c == b'@')
+        .expect("Robot position found");
     let pos = (robot_idx % width, robot_idx / width);
     grid[robot_idx] = b'.';
 
-    let instructions = instructions.as_bytes().iter().copied().filter(|&b| b != b'\n').collect();
+    let instructions = instructions
+        .as_bytes()
+        .iter()
+        .copied()
+        .filter(|&b| b != b'\n')
+        .collect();
 
     (grid, instructions, width, height, pos)
 }
-
 
 pub fn part_one(input: &str) -> Option<u32> {
     let (grid, instructions, width, height, pos) = process_grid(input);
@@ -131,7 +141,7 @@ fn run_instructions(
                 let dy = if instr == b'^' { -1 } else { 1 };
                 let new_y = pos.1.checked_add_signed(dy).unwrap();
                 let idx = new_y * w + pos.0;
-                
+
                 match grid[idx] {
                     b'O' => {
                         let b = (pos.0, pos.0);
@@ -179,7 +189,7 @@ fn run_instructions(
 
 pub fn part_two(input: &str) -> Option<u32> {
     let (grid, instructions) = input.split_once("\n\n").unwrap();
-    
+
     // Get dimensions and parse grid in one pass
     let mut width = 0;
     let mut height = 0;

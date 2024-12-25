@@ -36,12 +36,18 @@ fn simulate_blinks(stones: &[u64], blinks: usize) -> usize {
 }
 
 pub fn part_one(input: &str) -> Option<usize> {
-    let stones: Vec<u64> = input.split_whitespace().filter_map(|s| s.parse().ok()).collect();
+    let stones: Vec<u64> = input
+        .split_whitespace()
+        .filter_map(|s| s.parse().ok())
+        .collect();
     Some(simulate_blinks(&stones, 25))
 }
 
 pub fn part_two(input: &str) -> Option<usize> {
-    let stones: Vec<u64> = input.split_whitespace().filter_map(|s| s.parse().ok()).collect();
+    let stones: Vec<u64> = input
+        .split_whitespace()
+        .filter_map(|s| s.parse().ok())
+        .collect();
     Some(simulate_blinks(&stones, 75))
 }
 

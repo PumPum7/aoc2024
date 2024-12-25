@@ -25,21 +25,24 @@ fn find_antinodes(grid: &[Vec<char>], max_distance: Option<i32>) -> HashSet<(i32
             for &pos2 in antennas[i + 1..].iter() {
                 let dx = pos2.0 - pos1.0;
                 let dy = pos2.1 - pos1.1;
-                
+
                 if max_distance == Some(2) {
                     // Special case for n=2 (part one)
                     let points = [
                         (pos1.0 + dx * 2, pos1.1 + dy * 2),
                         (pos2.0 - dx * 2, pos2.1 - dy * 2),
                     ];
-                    
-                    antinodes.extend(points.iter()
-                        .filter(|&&(x, y)| x >= 0 && y >= 0 && x < width && y < height));
+
+                    antinodes.extend(
+                        points
+                            .iter()
+                            .filter(|&&(x, y)| x >= 0 && y >= 0 && x < width && y < height),
+                    );
                     continue;
                 }
 
                 let max_n = max_distance.unwrap_or(i32::MAX);
-                
+
                 let mut n = 1;
                 while n <= max_n {
                     let points = [
@@ -47,7 +50,8 @@ fn find_antinodes(grid: &[Vec<char>], max_distance: Option<i32>) -> HashSet<(i32
                         (pos2.0 - dx * n, pos2.1 - dy * n),
                     ];
 
-                    let valid_points = points.iter()
+                    let valid_points = points
+                        .iter()
                         .filter(|&&(x, y)| x >= 0 && y >= 0 && x < width && y < height)
                         .count();
 
@@ -55,9 +59,12 @@ fn find_antinodes(grid: &[Vec<char>], max_distance: Option<i32>) -> HashSet<(i32
                         break;
                     }
 
-                    antinodes.extend(points.iter()
-                        .filter(|&&(x, y)| x >= 0 && y >= 0 && x < width && y < height));
-                    
+                    antinodes.extend(
+                        points
+                            .iter()
+                            .filter(|&&(x, y)| x >= 0 && y >= 0 && x < width && y < height),
+                    );
+
                     n += 1;
                 }
             }
@@ -68,7 +75,7 @@ fn find_antinodes(grid: &[Vec<char>], max_distance: Option<i32>) -> HashSet<(i32
 
 pub fn part_one(input: &str) -> Option<u32> {
     let grid: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
-    
+
     let antinodes = find_antinodes(&grid, Some(2));
 
     Some(antinodes.len() as u32)

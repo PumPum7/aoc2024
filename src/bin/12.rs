@@ -19,7 +19,11 @@ impl Grid {
             })
             .collect();
         let height = data.len() / width;
-        Self { data, width, height }
+        Self {
+            data,
+            width,
+            height,
+        }
     }
 
     #[inline]
@@ -61,7 +65,10 @@ pub fn part_one(input: &str) -> Option<u32> {
                         perimeter += 1;
                     }
 
-                    if y + 1 < grid.height && !visited[(y + 1) * grid.width + x] && grid.get(y + 1, x) == plant {
+                    if y + 1 < grid.height
+                        && !visited[(y + 1) * grid.width + x]
+                        && grid.get(y + 1, x) == plant
+                    {
                         stack.push((y + 1, x));
                     } else if y + 1 == grid.height || grid.get(y + 1, x) != plant {
                         perimeter += 1;
@@ -73,7 +80,10 @@ pub fn part_one(input: &str) -> Option<u32> {
                         perimeter += 1;
                     }
 
-                    if x + 1 < grid.width && !visited[y * grid.width + x + 1] && grid.get(y, x + 1) == plant {
+                    if x + 1 < grid.width
+                        && !visited[y * grid.width + x + 1]
+                        && grid.get(y, x + 1) == plant
+                    {
                         stack.push((y, x + 1));
                     } else if x + 1 == grid.width || grid.get(y, x + 1) != plant {
                         perimeter += 1;
@@ -152,35 +162,47 @@ fn calculate_discount(region: &HashSet<(usize, usize)>, limit: (usize, usize)) -
     let mut total = 0;
     for &(y, x) in region {
         let mut count = 0;
-        
+
         // Top edge
         if y == 0 || !region.contains(&(y - 1, x)) {
-            if x == 0 || !region.contains(&(y, x - 1)) || (y > 0 && region.contains(&(y - 1, x - 1))) {
+            if x == 0
+                || !region.contains(&(y, x - 1))
+                || (y > 0 && region.contains(&(y - 1, x - 1)))
+            {
                 count += 1;
             }
         }
-        
+
         // Bottom edge
         if y == limit.0 - 1 || !region.contains(&(y + 1, x)) {
-            if x == 0 || !region.contains(&(y, x - 1)) || (y < limit.0 - 1 && region.contains(&(y + 1, x - 1))) {
+            if x == 0
+                || !region.contains(&(y, x - 1))
+                || (y < limit.0 - 1 && region.contains(&(y + 1, x - 1)))
+            {
                 count += 1;
             }
         }
-        
+
         // Left edge
         if x == 0 || !region.contains(&(y, x - 1)) {
-            if y == 0 || !region.contains(&(y - 1, x)) || (x > 0 && region.contains(&(y - 1, x - 1))) {
+            if y == 0
+                || !region.contains(&(y - 1, x))
+                || (x > 0 && region.contains(&(y - 1, x - 1)))
+            {
                 count += 1;
             }
         }
-        
+
         // Right edge
         if x == limit.1 - 1 || !region.contains(&(y, x + 1)) {
-            if y == 0 || !region.contains(&(y - 1, x)) || (x < limit.1 - 1 && region.contains(&(y - 1, x + 1))) {
+            if y == 0
+                || !region.contains(&(y - 1, x))
+                || (x < limit.1 - 1 && region.contains(&(y - 1, x + 1)))
+            {
                 count += 1;
             }
         }
-        
+
         total += count;
     }
     total

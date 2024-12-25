@@ -5,14 +5,10 @@ use std::collections::{HashSet, VecDeque};
 const GRID_SIZE: usize = 71;
 const DIRS: [(i32, i32); 4] = [(0, 1), (1, 0), (0, -1), (-1, 0)];
 
-fn can_reach_target(
-    blocked: &HashSet<(i32, i32)>,
-    start: (i32, i32),
-    target: (i32, i32),
-) -> bool {
+fn can_reach_target(blocked: &HashSet<(i32, i32)>, start: (i32, i32), target: (i32, i32)) -> bool {
     let mut queue = VecDeque::with_capacity(GRID_SIZE * GRID_SIZE);
     let mut visited = vec![false; GRID_SIZE * GRID_SIZE];
-    
+
     queue.push_back(start);
     visited[(start.1 as usize) * GRID_SIZE + (start.0 as usize)] = true;
 
@@ -24,10 +20,8 @@ fn can_reach_target(
         for &(dx, dy) in &DIRS {
             let new_x = x + dx;
             let new_y = y + dy;
-            
-            if new_x >= 0 && new_x < GRID_SIZE as i32 
-                && new_y >= 0 && new_y < GRID_SIZE as i32 
-            {
+
+            if new_x >= 0 && new_x < GRID_SIZE as i32 && new_y >= 0 && new_y < GRID_SIZE as i32 {
                 let idx = (new_y as usize) * GRID_SIZE + (new_x as usize);
                 if !visited[idx] && !blocked.contains(&(new_x, new_y)) {
                     visited[idx] = true;
@@ -97,7 +91,7 @@ pub fn part_two(input: &str) -> Option<String> {
         .collect();
 
     let mut blocked = HashSet::with_capacity(coordinates.len());
-    
+
     // Check if initial path exists
     if !can_reach_target(&blocked, (0, 0), (70, 70)) {
         return Some("0,0".to_string());
@@ -105,7 +99,7 @@ pub fn part_two(input: &str) -> Option<String> {
 
     for &coord in &coordinates {
         blocked.insert(coord);
-        
+
         // Early exit if this coordinate blocks the only possible path
         if !can_reach_target(&blocked, (0, 0), (70, 70)) {
             return Some(format!("{},{}", coord.0, coord.1));

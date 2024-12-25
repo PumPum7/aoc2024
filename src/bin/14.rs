@@ -7,13 +7,13 @@ fn parse_robot(line: &str) -> Robot {
     let (pos_str, vel_str) = line.split_once(' ').unwrap();
     let pos_str = &pos_str[2..]; // Skip "p="
     let vel_str = &vel_str[2..]; // Skip "v="
-    
+
     let (x, y) = pos_str.split_once(',').unwrap();
     let (vx, vy) = vel_str.split_once(',').unwrap();
 
     (
         (x.parse().unwrap(), y.parse().unwrap()),
-        (vx.parse().unwrap(), vy.parse().unwrap())
+        (vx.parse().unwrap(), vy.parse().unwrap()),
     )
 }
 
@@ -21,36 +21,40 @@ fn simulate_step(robots: &mut Vec<Robot>, width: i32, height: i32) {
     // Process robots in chunks for better cache utilization
     for chunk in robots.chunks_mut(32) {
         for robot in chunk {
-            let mut new_x = robot.0.0 + robot.1.0;
-            let mut new_y = robot.0.1 + robot.1.1;
-            
+            let mut new_x = robot.0 .0 + robot.1 .0;
+            let mut new_y = robot.0 .1 + robot.1 .1;
+
             // Handle wrapping with branches instead of rem_euclid
             if new_x >= width {
                 new_x -= width;
             } else if new_x < 0 {
                 new_x += width;
             }
-            
+
             if new_y >= height {
                 new_y -= height;
             } else if new_y < 0 {
                 new_y += height;
             }
-            
-            robot.0.0 = new_x;
-            robot.0.1 = new_y;
+
+            robot.0 .0 = new_x;
+            robot.0 .1 = new_y;
         }
     }
 }
 
-fn count_robots_in_quadrants(robots: &[Robot], width: i32, height: i32) -> (usize, usize, usize, usize) {
+fn count_robots_in_quadrants(
+    robots: &[Robot],
+    width: i32,
+    height: i32,
+) -> (usize, usize, usize, usize) {
     let mid_x = width / 2;
     let mid_y = height / 2;
     let mut counts = (0, 0, 0, 0);
 
     for robot in robots {
-        if robot.0.0 != mid_x && robot.0.1 != mid_y {
-            match (robot.0.0 < mid_x, robot.0.1 < mid_y) {
+        if robot.0 .0 != mid_x && robot.0 .1 != mid_y {
+            match (robot.0 .0 < mid_x, robot.0 .1 < mid_y) {
                 (true, true) => counts.0 += 1,
                 (false, true) => counts.1 += 1,
                 (true, false) => counts.2 += 1,
@@ -58,7 +62,7 @@ fn count_robots_in_quadrants(robots: &[Robot], width: i32, height: i32) -> (usiz
             }
         }
     }
-    
+
     counts
 }
 
@@ -80,35 +84,35 @@ pub fn part_two(input: &str) -> Option<u32> {
     let mut robots: Vec<Robot> = input.lines().map(parse_robot).collect();
     let width = 101;
     let height = 103;
-    
+
     let mut positions = vec![0u8; (width * height) as usize];
-    
+
     for step in 1.. {
         simulate_step(&mut robots, width, height);
-        
+
         positions.fill(0);
-        
+
         for robot in &robots {
-            let idx = (robot.0.1 * width + robot.0.0) as usize;
+            let idx = (robot.0 .1 * width + robot.0 .0) as usize;
             positions[idx] = 1;
         }
-        
+
         // Check for aligned robots using sliding window
         for y in 0..height {
             let row_start = (y * width) as usize;
             let mut window_sum = positions[row_start..row_start + 16].iter().sum::<u8>();
-            
+
             if window_sum == 16 {
                 return Some(step);
             }
-            
-            for x in 0..width-16 {
+
+            for x in 0..width - 16 {
                 let idx = row_start + x as usize;
                 window_sum = window_sum - positions[idx] + positions[idx + 16];
                 if window_sum == 16 {
                     return Some(step);
                 }
-                
+
                 // Early exit if remaining positions can't form 16 consecutive robots
                 if window_sum < 8 {
                     continue;

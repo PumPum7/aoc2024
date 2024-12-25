@@ -133,7 +133,7 @@ fn process_outputs<'a>(
             outputs
                 .iter()
                 .filter(|&(signal, _)| !signal.starts_with('z'))
-                .map(|&(signal, _)| signal)
+                .map(|&(signal, _)| signal),
         );
     }
 }
@@ -189,7 +189,7 @@ fn process_carries<'a>(
             carries
                 .iter()
                 .filter(|&&(signal, _)| signal.starts_with('z') && signal != "z45")
-                .map(|&(signal, _)| signal)
+                .map(|&(signal, _)| signal),
         );
     }
 }
@@ -203,7 +203,7 @@ fn process_full_carries<'a>(
             full_carries
                 .iter()
                 .filter(|&&(signal, _)| signal.starts_with('z'))
-                .map(|&(signal, _)| signal)
+                .map(|&(signal, _)| signal),
         );
     }
 }
